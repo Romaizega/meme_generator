@@ -34,7 +34,6 @@ class User(AbstractUser):
         max_length=MAX_FIELD_LENGTH,
         verbose_name='Last name'
     )
-    is_subscribed = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
