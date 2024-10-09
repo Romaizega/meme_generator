@@ -20,7 +20,7 @@ class User(AbstractUser):
         validators=[
             RegexValidator(
                 regex=r'^[\w.@+-]+$',
-                message=('Username must contain only letters, , '
+                message=('Username must contain only letters, '
                          'numbers and @/./+/-/_..')
             )
         ],
