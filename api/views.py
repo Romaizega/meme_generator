@@ -58,20 +58,16 @@ class RatingViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-    @action(detail=True, methods=['post'])
-    def rate_meme(self, request, pk=None):
-        try:
-            meme = Meme.objects.get(pk=pk)
-        except Meme.DoesNotExist:
-            return Response({"error": "Meme not found."}, status=status.HTTP_404_NOT_FOUND)
-        rating_data = {
-            'meme': meme.id,
-            'user': request.user.id,
-            'score': request.data.get('score')
-        }
-        serializer = self.get_serializer(data=rating_data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+
+class RandomMemeViewSet(viewsets.ModelViewSet):
+    queryset = Meme.objects.all()
+    serializer_class = MemeSerializer
+    permission_classes = (IsAuthorOrAdminOrReadOnly,)
+
+    @action(detail=False, methods=['get'])
+    def random(self, request):
+        meme = Meme.objects.order_by('?').first()
+        serializer = MemeSerializer(meme)
+        return Response(serializer.data)

@@ -6,8 +6,8 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from rest_framework.routers import DefaultRouter
 
-from api.views import (MemeTemplateViewSet, MemeViewSet, RatingViewSet,
-                       MemeUserViewSet)
+from api.views import (MemeTemplateViewSet, MemeUserViewSet, MemeViewSet,
+                       RandomMemeViewSet, RatingViewSet)
 
 app_name = 'api'
 
@@ -16,8 +16,9 @@ router = DefaultRouter()
 
 router.register('users', MemeUserViewSet, 'users')
 router.register('templates', MemeTemplateViewSet, 'templates')
-router.register('ratings', RatingViewSet, 'ratings')
+router.register('rate', RatingViewSet, 'rate')
 router.register('memes', MemeViewSet, 'memes')
+router.register('random' , RandomMemeViewSet, 'random')
 
 
 schema_view = get_schema_view(
