@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from api.models import Meme, MemeTemplate, Rating, User
+from api.models import Meme, MemeTemplate, Rating, MemeUser
 
 
 class MemeAdmin(admin.ModelAdmin):
@@ -14,7 +14,7 @@ class MemeAdmin(admin.ModelAdmin):
 class RatingAdmin(admin.ModelAdmin):
     pass
 
-class UserAdmin(admin.ModelAdmin):
+class MemeUserAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'username',
@@ -28,5 +28,5 @@ class MemeAdmin(admin.ModelAdmin):
 
 admin.site.register(MemeTemplate, MemeAdmin)
 admin.site.register(Rating, RatingAdmin)
-admin.site.register(User, UserAdmin)
+admin.site.register(MemeUser, MemeUserAdmin)
 admin.site.register(Meme, MemeAdmin)

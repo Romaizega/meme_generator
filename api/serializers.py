@@ -1,12 +1,14 @@
 from django.contrib.auth import get_user_model
+from django.db import transaction
+from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
-from .models import Meme, MemeTemplate
+from .models import Meme, MemeTemplate, Rating
 
 User = get_user_model()
 
 
-class UserSerializer(serializers.ModelSerializer):
+class MemeUserSerializer(UserSerializer):
     class Meta:
         model = User
         fields = (
@@ -34,7 +36,7 @@ class MemeTemplateSerializer(serializers.ModelSerializer):
 
 class MemeSerializer(serializers.ModelSerializer):
     template = MemeTemplateSerializer()
-    created_by = UserSerializer()
+    created_by = MemeUserSerializer()
     created_at = serializers.DateTimeField(read_only=True)
     class Meta:
         model = Meme
@@ -47,9 +49,34 @@ class MemeSerializer(serializers.ModelSerializer):
             'created_at',
         )
 
+    @transaction.atomic
     def create(self, validated_data):
         template_data = validated_data.pop('template')
         template = MemeTemplate.objects.get(id=template_data['id'])
-        meme = Meme.objects.create(template=template, created_by=self.context['request'].user, **validated_data)
+        meme = Meme.objects.create(template=template, 
+                                   created_by=self.context['request'].user, 
+                                   **validated_data)
         return meme
 
+
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = (
+            'id',
+            'meme',
+            'user',
+            'score',
+            'created_at')
+
+    
+    @transaction.atomic
+    def create(self, validated_data):
+        user = self.context['request'].user
+        meme = validated_data['meme']
+        score = validated_data['score']
+        rating, _ = Rating.objects.update_or_create(
+            meme=meme, user=user,
+            defaults={'score': score}
+        )
+        return rating
