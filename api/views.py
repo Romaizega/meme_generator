@@ -69,6 +69,12 @@ class MemeViewSet(viewsets.ModelViewSet):
             })
         else:
             return Response({'error': 'No memes available'}, status=404)
+        
+    @action(detail=False, methods=['get'], url_path='top')
+    def top_memes(self, request):
+        top_memes = Meme.objects.order_by('-created_at')[:10]
+        serializer = self.get_serializer(top_memes, many=True)
+        return Response(serializer.data)
 
 
 class RatingViewSet(viewsets.ModelViewSet):
