@@ -71,6 +71,24 @@ class MemeViewSet(viewsets.ModelViewSet):
         else:
             return Response({'error': 'No memes available'}, status=404)
         
+    @action(detail=True, methods=['post'], url_path='rate')
+    def rate_meme(self, request, pk=None):
+        try:
+            meme = self.get_object()
+        except Meme.DoesNotExist:
+            return Response({'error': 'Meme not found'}, status=404)
+        score_value = request.data.get('score') 
+        if score_value is None:
+            return Response({'error': 'Score value is required'}, status=400)
+        try:
+            score_value = int(score_value)
+            if score_value < 1 or score_value > 5:
+                return Response({'error': 'Score must be between 1 and 5'}, status=400)
+        except ValueError:
+            return Response({'error': 'Invalid score value'}, status=400)
+        Rating.objects.create(meme=meme, user=request.user, score=score_value)
+        return Response({'message': 'Rating added successfully'}, status=201)
+        
     @action(detail=False, methods=['get'], url_path='top')
     def top_memes(self, request):
         top_memes = Meme.objects.order_by('-created_at')[:10]
@@ -85,7 +103,8 @@ class RatingViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-  
+    
+
 
 class RandomMemeViewSet(viewsets.ModelViewSet):
     queryset = Meme.objects.all()
