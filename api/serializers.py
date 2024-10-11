@@ -80,3 +80,9 @@ class RatingSerializer(serializers.ModelSerializer):
             defaults={'score': score}
         )
         return rating
+    
+
+class TopMemeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Meme
+        fields = ['id', 'top_text', 'bottom_text', 'created_at']

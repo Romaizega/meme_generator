@@ -10,7 +10,8 @@ from rest_framework.response import Response
 from api.models import Meme, MemeTemplate, MemeUser, Rating
 from api.permissions import IsAuthorOrAdminOrReadOnly
 from api.serializers import (MemeSerializer, MemeTemplateSerializer,
-                             MemeUserSerializer, RatingSerializer)
+                             MemeUserSerializer, RatingSerializer,
+                             TopMemeSerializer)
 
 
 class MemeUserViewSet(UserViewSet):
@@ -73,7 +74,7 @@ class MemeViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'], url_path='top')
     def top_memes(self, request):
         top_memes = Meme.objects.order_by('-created_at')[:10]
-        serializer = self.get_serializer(top_memes, many=True)
+        serializer = TopMemeSerializer(top_memes, many=True)
         return Response(serializer.data)
 
 
