@@ -16,6 +16,11 @@ class MemeUserViewSet(UserViewSet):
     queryset = MemeUser.objects.all()
     serializer_class = MemeUserSerializer
 
+    def get_permissions(self):
+        if self.action == 'me':
+            return (IsAuthenticated(),)
+        return super().get_permissions()
+
 
 class MemeTemplateViewSet(viewsets.ModelViewSet):
     queryset = MemeTemplate.objects.all()
